@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kamus Bergambar Digital</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Fredoka & Quicksand for Kid-friendly UI) -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-yellow': '#FFDE59',
+                        'brand-orange': '#FF914D',
+                        'brand-blue': '#5271FF',
+                        'brand-green': '#00C853',
+                        'brand-pink': '#FF66C4',
+                        'brand-purple': '#8C52FF',
+                        'brand-bg': '#FFF9E6',
+                        'brand-red': '#FF4B4B'
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        quicksand: ['Quicksand', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Fredoka', 'Quicksand', sans-serif;
+            background-color: #FFF9E6;
+            background-image: radial-gradient(#FFDE59 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .btn-bounce {
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.1s ease;
+        }
+        .btn-bounce:active {
+            transform: scale(0.95) translateY(4px);
+            box-shadow: 0px 2px 0px rgba(0,0,0,0.2) !important;
+        }
+
+        .card-shadow-yellow { box-shadow: 0 8px 0 #E6C200; }
+        .card-shadow-blue { box-shadow: 0 8px 0 #3B52C6; }
+        .card-shadow-green { box-shadow: 0 8px 0 #009638; }
+        .card-shadow-orange { box-shadow: 0 8px 0 #D66D28; }
+        .card-shadow-purple { box-shadow: 0 8px 0 #6A32C9; }
+        .card-shadow-red { box-shadow: 0 8px 0 #C92A2A; }
+
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .animate-pulse-subtle {
+            animation: pulse-subtle 2s infinite ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFF0BD;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF914D;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 antialiased selection:bg-brand-yellow">
+
+    <!-- TOP NAVIGATION / HEADER -->
+    <header class="w-full bg-white/90 backdrop-blur-md border-b-4 border-brand-yellow sticky top-0 z-40 px-4 py-3 shadow-sm">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <!-- App Logo / Title -->
+            <div onclick="navigateTo('view-home')" class="cursor-pointer flex items-center gap-3 group">
+                <div class="w-12 h-12 bg-brand-yellow rounded-2xl flex items-center justify-center text-2xl shadow-md group-hover:rotate-6 transition-transform">
+                    📖
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-wide text-brand-purple leading-none">KAMUS BERGAMBAR</h1>
+                    <span class="text-xs font-semibold text-brand-orange tracking-widest uppercase">Digital Interactive</span>
+                </div>
+            </div>
+
+            <!-- Header Right Controls -->
+            <div class="flex items-center gap-2 sm:gap-4">
+                <!-- Sound Toggle -->
+                <button onclick="toggleSound()" id="sound-btn" class="w-11 h-11 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl flex items-center justify-center text-lg font-bold border-2 border-slate-200 btn-bounce">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+
+                <!-- Profile Badge / Selector -->
+                <div id="header-profile" class="hidden flex items-center gap-2 bg-brand-yellow/30 px-3 py-1.5 rounded-2xl border-2 border-brand-yellow">
+                    <div class="w-8 h-8 bg-brand-orange text-white font-bold rounded-xl flex items-center justify-center text-sm shadow-sm" id="header-avatar">
+                        👦
+                    </div>
+                    <span id="header-child-name" class="font-bold text-sm text-slate-800 truncate max-w-[100px]">Child</span>
+                </div>
+
+                <!-- Parent Mode / Auth Button -->
+                <button onclick="openParentModal()" class="bg-brand-purple text-white px-3.5 py-2 rounded-2xl font-bold text-sm shadow-md border-b-4 border-purple-800 flex items-center gap-2 btn-bounce">
+                    <i class="fas fa-user-shield"></i>
+                    <span class="hidden sm:inline">Parent Mode</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="max-w-5xl w-full mx-auto p-4 sm:p-6 flex-grow flex flex-col justify-center">
+
+        <!-- ==================== VIEW 1: AUTHENTICATION (LOGIN / SIGNUP) ==================== -->
+        <section id="view-auth" class="view-screen max-w-md mx-auto w-full">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border-4 border-brand-yellow shadow-xl text-center relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-brand-yellow/20 rounded-full blur-xl"></div>
+                <div class="text-5xl mb-3 animate-pulse-subtle">🎨</div>
+                <h2 id="auth-title" class="text-2xl font-bold text-brand-purple mb-1">Selamat Datang!</h2>
+                <p id="auth-subtitle" class="text-sm font-semibold text-slate-500 mb-6">Satu akaun untuk semua peranti sekeluarga</p>
+
+                <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4 text-left">
+                    <div id="name-field-group" class="hidden space-y-1">
+                        <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Nama Ibu Bapa / Penjaga</label>
+                        <input type="text" id="auth-name" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 focus:border-brand-purple focus:outline-none text-slate-800 font-semibold" placeholder="Contoh: Puan Sarah">
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">E-mel Ibu Bapa</label>
+                        <input type="email" id="auth-email" required class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 focus:border-brand-purple focus:outline-none text-slate-800 font-semibold" placeholder="ibu.bapa@gmail.com">
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">Kata Laluan</label>
+                        <input type="password" id="auth-password" required class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 focus:border-brand-purple focus:outline-none text-slate-800 font-semibold" placeholder="••••••••">
+                    </div>
+
+                    <button type="submit" id="auth-submit-btn" class="w-full bg-brand-green text-white font-bold py-3.5 rounded-2xl text-lg shadow-md border-b-4 border-green-700 btn-bounce mt-2">
+                        Log Masuk
+                    </button>
+                </form>
+
+                <div class="mt-6 pt-4 border-t border-slate-100 text-sm font-semibold text-slate-600">
+                    <span id="auth-toggle-text">Belum ada akaun ibu bapa?</span>
+                    <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-brand-purple font-bold ml-1 hover:underline">Daftar Sini</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 2: CHILD SELECTOR ==================== -->
+        <section id="view-child-select" class="view-screen hidden max-w-2xl mx-auto w-full text-center space-y-6">
+            <div>
+                <span class="bg-brand-yellow text-slate-800 font-extrabold px-4 py-1.5 rounded-full text-xs uppercase tracking-widest shadow-sm">Pilih Profil</span>
+                <h2 class="text-3xl font-bold text-brand-purple mt-2">Siapa Yang Nak Belajar Hari Ini?</h2>
+            </div>
+
+            <div id="child-profiles-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2">
+                <!-- Dynamic Child Cards Inserted Here -->
+            </div>
+
+            <div class="pt-4 flex justify-center">
+                <button onclick="openParentModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-2.5 rounded-2xl text-sm border-2 border-slate-300 flex items-center gap-2 btn-bounce">
+                    <i class="fas fa-plus-circle text-brand-purple"></i>
+                    Tambah Profil Anak (Parent Mode)
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 3: HOME / DASHBOARD ==================== -->
+        <section id="view-home" class="view-screen hidden space-y-6">
+            <!-- Top Child Stats Bar -->
+            <div class="bg-white rounded-3xl p-5 border-4 border-brand-yellow shadow-lg flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-brand-yellow rounded-2xl flex items-center justify-center text-3xl shadow-inner border-2 border-brand-orange">
+                        👦
+                    </div>
+                    <div>
+                        <h2 id="home-child-name" class="text-2xl font-bold text-slate-800 leading-tight">Syafiq</h2>
+                        <span class="text-xs font-extrabold bg-brand-purple/10 text-brand-purple px-2.5 py-0.5 rounded-full uppercase tracking-wider">Kanak-kanak Pintar</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 sm:gap-6 ml-auto">
+                    <div class="text-center bg-amber-50 px-3 py-1.5 rounded-2xl border border-amber-200">
+                        <span class="text-xs font-bold text-amber-600 uppercase block">⭐ Markah</span>
+                        <span id="home-score" class="text-xl font-bold text-slate-800">1,250</span>
+                    </div>
+
+                    <div class="text-center bg-orange-50 px-3 py-1.5 rounded-2xl border border-orange-200">
+                        <span class="text-xs font-bold text-orange-600 uppercase block">🔥 Streak</span>
+                        <span id="home-streak" class="text-xl font-bold text-slate-800">8</span>
+                    </div>
+
+                    <div class="text-center bg-purple-50 px-3 py-1.5 rounded-2xl border border-purple-200">
+                        <span class="text-xs font-bold text-purple-600 uppercase block">🏆 Lencana</span>
+                        <span id="home-badges-count" class="text-xl font-bold text-slate-800">3/7</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Action Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <!-- CONTINUE / PLAY -->
+                <div onclick="navigateTo('view-level-select')" class="bg-gradient-to-br from-brand-yellow to-amber-400 p-6 rounded-3xl border-4 border-amber-500 card-shadow-yellow cursor-pointer btn-bounce relative overflow-hidden flex flex-col justify-between min-h-[180px]">
+                    <div class="z-10">
+                        <span class="bg-white/80 backdrop-blur-md text-amber-900 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">Mula Permainan</span>
+                        <h3 class="text-3xl font-extrabold text-slate-900 mt-2">MAIN GAME 🎮</h3>
+                        <p class="text-amber-900 text-sm font-semibold mt-1">Uji minda & kumpul markah tanpa had!</p>
+                    </div>
+                    <div class="z-10 mt-4">
+                        <span class="bg-slate-900 text-white font-bold px-5 py-2.5 rounded-2xl text-sm inline-flex items-center gap-2 shadow-lg">
+                            Mula Sekarang <i class="fas fa-arrow-right"></i>
+                        </span>
+                    </div>
+                    <div class="absolute -right-4 -bottom-4 text-8xl opacity-20 pointer-events-none">🕹️</div>
+                </div>
+
+                <!-- LEARN / KAMUS -->
+                <div onclick="navigateTo('view-level-select', {mode: 'learn'})" class="bg-gradient-to-br from-brand-blue to-indigo-500 p-6 rounded-3xl border-4 border-indigo-700 card-shadow-blue cursor-pointer btn-bounce relative overflow-hidden flex flex-col justify-between min-h-[180px] text-white">
+                    <div class="z-10">
+                        <span class="bg-white/20 backdrop-blur-md text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">Mod Belajar</span>
+                        <h3 class="text-3xl font-extrabold text-white mt-2">BELAJAR 📚</h3>
+                        <p class="text-indigo-100 text-sm font-semibold mt-1">Terokai perkataan BM & BI beserta ilustrasi.</p>
+                    </div>
+                    <div class="z-10 mt-4">
+                        <span class="bg-white text-brand-blue font-bold px-5 py-2.5 rounded-2xl text-sm inline-flex items-center gap-2 shadow-lg">
+                            Buka Kamus <i class="fas fa-book-open"></i>
+                        </span>
+                    </div>
+                    <div class="absolute -right-4 -bottom-4 text-8xl opacity-20 pointer-events-none">🖼️</div>
+                </div>
+            </div>
+
+            <!-- Secondary Actions -->
+            <div class="grid grid-cols-2 gap-4">
+                <div onclick="navigateTo('view-achievements')" class="bg-white p-4 rounded-3xl border-4 border-brand-green card-shadow-green cursor-pointer btn-bounce flex items-center gap-4">
+                    <div class="w-12 h-12 bg-green-100 text-brand-green text-2xl rounded-2xl flex items-center justify-center">
+                        🏆
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-base">Pencapaian</h4>
+                        <span class="text-xs font-semibold text-slate-500">Lencana & Rekod</span>
+                    </div>
+                </div>
+
+                <div onclick="openParentModal()" class="bg-white p-4 rounded-3xl border-4 border-brand-purple card-shadow-purple cursor-pointer btn-bounce flex items-center gap-4">
+                    <div class="w-12 h-12 bg-purple-100 text-brand-purple text-2xl rounded-2xl flex items-center justify-center">
+                        ⚙️
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-base">Parent Mode</h4>
+                        <span class="text-xs font-semibold text-slate-500">Tetapan & Prestasi</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 4: LEVEL SELECTOR ==================== -->
+        <section id="view-level-select" class="view-screen hidden space-y-6 max-w-3xl mx-auto w-full">
+            <div class="flex items-center justify-between">
+                <button onclick="navigateTo('view-home')" class="bg-white border-2 border-slate-200 text-slate-700 font-bold px-4 py-2 rounded-2xl text-sm btn-bounce">
+                    <i class="fas fa-arrow-left mr-1"></i> Kembali
+                </button>
+                <h2 id="level-select-title" class="text-2xl font-bold text-brand-purple">Pilih Tahap Umur</h2>
+                <div class="w-16"></div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+                <!-- LEVEL 1 -->
+                <div onclick="selectLevel(1)" class="bg-white p-6 rounded-3xl border-4 border-brand-pink card-shadow-orange cursor-pointer btn-bounce text-center space-y-4 hover:border-brand-orange transition-colors">
+                    <div class="w-24 h-24 bg-pink-100 text-pink-500 rounded-3xl mx-auto flex items-center justify-center text-5xl shadow-inner">
+                        🎈
+                    </div>
+                    <div>
+                        <span class="bg-brand-pink text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">31 Kategori (1,550 Perkataan)</span>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-2">LEVEL 1 — PRASEKOLAH</h3>
+                        <p class="text-slate-500 font-semibold text-sm mt-1">Umur 4 hingga 6 Tahun</p>
+                    </div>
+                    <div class="pt-2">
+                        <span class="bg-brand-pink text-white font-bold px-6 py-2.5 rounded-2xl text-sm inline-block shadow-md">
+                            Pilih Level 1
+                        </span>
+                    </div>
+                </div>
+
+                <!-- LEVEL 2 -->
+                <div onclick="selectLevel(2)" class="bg-white p-6 rounded-3xl border-4 border-brand-blue card-shadow-blue cursor-pointer btn-bounce text-center space-y-4 hover:border-indigo-600 transition-colors">
+                    <div class="w-24 h-24 bg-blue-100 text-brand-blue rounded-3xl mx-auto flex items-center justify-center text-5xl shadow-inner">
+                        🚀
+                    </div>
+                    <div>
+                        <span class="bg-brand-blue text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">40 Kategori (2,000 Perkataan)</span>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-2">LEVEL 2 — SEKOLAH RENDAH</h3>
+                        <p class="text-slate-500 font-semibold text-sm mt-1">Umur 7 hingga 12 Tahun</p>
+                    </div>
+                    <div class="pt-2">
+                        <span class="bg-brand-blue text-white font-bold px-6 py-2.5 rounded-2xl text-sm inline-block shadow-md">
+                            Pilih Level 2
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 5: CATEGORY SELECTOR ==================== -->
+        <section id="view-category-select" class="view-screen hidden space-y-6 w-full">
+            <div class="flex items-center justify-between">
+                <button onclick="navigateTo('view-level-select')" class="bg-white border-2 border-slate-200 text-slate-700 font-bold px-4 py-2 rounded-2xl text-sm btn-bounce">
+                    <i class="fas fa-arrow-left mr-1"></i> Kembali
+                </button>
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-brand-purple">Pilih Kategori</h2>
+                    <span id="current-level-label" class="text-xs font-bold text-brand-orange uppercase tracking-wider">Level 1 — Prasekolah</span>
+                </div>
+                <div class="w-16"></div>
+            </div>
+
+            <!-- Category Grid -->
+            <div id="categories-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 max-h-[65vh] overflow-y-auto p-1">
+                <!-- Dynamic Category Cards Inserted Here -->
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 6: LEARN MODE (DICTIONARY CARD) ==================== -->
+        <section id="view-learn" class="view-screen hidden space-y-6 max-w-xl mx-auto w-full">
+            <div class="flex items-center justify-between">
+                <button onclick="navigateTo('view-category-select')" class="bg-white border-2 border-slate-200 text-slate-700 font-bold px-4 py-2 rounded-2xl text-sm btn-bounce">
+                    <i class="fas fa-arrow-left mr-1"></i> Kategori
+                </button>
+                <span id="learn-category-title" class="text-lg font-bold text-brand-purple truncate max-w-[200px]">Kategori</span>
+                <span id="learn-card-counter" class="text-xs font-extrabold bg-brand-yellow px-3 py-1 rounded-full text-slate-800">1/50</span>
+            </div>
+
+            <!-- Big Flashcard -->
+            <div class="bg-white rounded-3xl p-6 border-4 border-brand-yellow shadow-xl text-center space-y-4">
+                <!-- Illustration Frame -->
+                <div id="learn-image-container" class="w-full h-56 sm:h-64 bg-slate-50 rounded-2xl border-2 border-slate-100 flex items-center justify-center overflow-hidden p-4 relative">
+                    <img id="learn-image" src="" alt="Word Illustration" class="max-h-full max-w-full object-contain">
+                </div>
+
+                <!-- Word Names -->
+                <div class="space-y-1">
+                    <h3 id="learn-bm" class="text-3xl font-extrabold text-slate-800 uppercase tracking-wide">KUCING</h3>
+                    <p id="learn-en" class="text-xl font-bold text-brand-blue capitalize">CAT</p>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex items-center justify-between gap-4 pt-4">
+                    <button onclick="prevLearnCard()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-2xl border-2 border-slate-300 btn-bounce">
+                        <i class="fas fa-chevron-left mr-1"></i> Sebelum
+                    </button>
+                    <button onclick="nextLearnCard()" class="flex-1 bg-brand-green text-white font-bold py-3 rounded-2xl border-b-4 border-green-700 btn-bounce">
+                        Seterusnya <i class="fas fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 7: GAME MODE ==================== -->
+        <section id="view-game" class="view-screen hidden space-y-5 max-w-xl mx-auto w-full">
+            <!-- Game HUD -->
+            <div class="bg-white rounded-2xl p-3 border-2 border-brand-yellow shadow-md flex items-center justify-between">
+                <button onclick="navigateTo('view-category-select')" class="text-slate-400 hover:text-slate-700 font-bold px-2 py-1 text-sm">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-1">
+                        <span class="text-amber-500 font-bold">⭐</span>
+                        <span id="game-score" class="font-extrabold text-slate-800">1,250</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="text-orange-500 font-bold">🔥</span>
+                        <span id="game-streak" class="font-extrabold text-slate-800">8</span>
+                    </div>
+                </div>
+
+                <div class="text-xs font-bold bg-brand-purple/10 text-brand-purple px-2.5 py-1 rounded-full">
+                    Tanpa Had
+                </div>
+            </div>
+
+            <!-- Question Card Container -->
+            <div id="game-card" class="bg-white rounded-3xl p-5 sm:p-6 border-4 border-brand-yellow shadow-xl text-center space-y-5 transition-all">
+                <!-- Question Prompt -->
+                <h3 id="game-prompt" class="text-xl sm:text-2xl font-bold text-brand-purple">
+                    Apakah nama gambar ini?
+                </h3>
+
+                <!-- Optional Target Image (For Picture Questions) -->
+                <div id="game-image-box" class="w-full h-44 sm:h-52 bg-slate-50 rounded-2xl border-2 border-slate-100 flex items-center justify-center p-3 overflow-hidden">
+                    <img id="game-image" src="" alt="Question Image" class="max-h-full max-w-full object-contain">
+                </div>
+
+                <!-- Multiple Choice Options Container -->
+                <div id="game-options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <!-- Dynamic Option Buttons Inserted Here -->
+                </div>
+
+                <!-- Feedback Message Overlay / Retry Button -->
+                <div id="game-feedback-area" class="hidden pt-2">
+                    <div id="game-feedback-box" class="p-3 rounded-2xl font-bold text-center text-lg flex items-center justify-center gap-2">
+                        <span id="game-feedback-text">Betul! 🎉</span>
+                    </div>
+                    <button id="retry-btn" onclick="retryQuestion()" class="hidden w-full mt-3 bg-brand-orange text-white font-bold py-3 rounded-2xl border-b-4 border-orange-700 btn-bounce">
+                        <i class="fas fa-redo mr-1"></i> SILA CUBA LAGI
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 8: ACHIEVEMENTS & BADGES ==================== -->
+        <section id="view-achievements" class="view-screen hidden space-y-6 max-w-3xl mx-auto w-full">
+            <div class="flex items-center justify-between">
+                <button onclick="navigateTo('view-home')" class="bg-white border-2 border-slate-200 text-slate-700 font-bold px-4 py-2 rounded-2xl text-sm btn-bounce">
+                    <i class="fas fa-arrow-left mr-1"></i> Home
+                </button>
+                <h2 class="text-2xl font-bold text-brand-purple">Lencana & Pencapaian</h2>
+                <div class="w-16"></div>
+            </div>
+
+            <div id="badges-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Badges will be dynamically populated -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full text-center py-4 text-xs font-semibold text-slate-400">
+        Kamus Bergambar Digital &copy; 2026 — Aplikasi Pendidikan Dwibahasa Kanak-kanak Malaysia
+    </footer>
+
+    <!-- ==================== MODAL: PARENT MODE & PIN ==================== -->
+    <div id="parent-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <!-- STEP 1: PIN CHALLENGE -->
+        <div id="parent-pin-step" class="bg-white rounded-3xl p-6 sm:p-8 border-4 border-brand-purple shadow-2xl max-w-md w-full text-center space-y-5">
+            <div class="w-16 h-16 bg-purple-100 text-brand-purple text-3xl rounded-2xl mx-auto flex items-center justify-center">
+                🔒
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-slate-800">Parent Mode</h3>
+                <p class="text-xs font-semibold text-slate-500 mt-1">Masukkan 4-digit PIN keselamatan (Default: 1234)</p>
+            </div>
+
+            <!-- PIN Display Dots -->
+            <div id="pin-dots" class="flex justify-center gap-3 py-2">
+                <div class="w-4 h-4 rounded-full border-2 border-slate-300 pin-dot"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-300 pin-dot"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-300 pin-dot"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-300 pin-dot"></div>
+            </div>
+
+            <!-- Numpad Grid -->
+            <div class="grid grid-cols-3 gap-3 max-w-[240px] mx-auto">
+                <button onclick="pressPin('1')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl text-xl btn-bounce">1</button>
+                <button onclick="pressPin('2')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl text-xl btn-bounce">2</button>
+                <button onclick="pressPin('3')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl text-xl btn-bounce">3</button>
+                <button onclick="pressPin('4')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl text-xl btn-bounce">4</button>
+                <button onclick="pressPin('5')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl text-xl btn-bounce">5</button>
+                <button onclick="pressPin('6')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl text-xl btn-bounce">6</button>
+                <button onclick="pressPin('7')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl text-xl btn-bounce">7</button>
+                <button onclick="pressPin('8')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl text-xl btn-bounce">8</button>
+                <button onclick="pressPin('9')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl text-xl btn-bounce">9</button>
+                <button onclick="clearPin()" class="bg-red-50 text-brand-red font-bold py-3 rounded-2xl text-sm btn-bounce">C</button>
+                <button onclick="pressPin('0')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl text-xl btn-bounce">0</button>
+                <button onclick="closeParentModal()" class="bg-slate-200 text-slate-700 font-bold py-3 rounded-2xl text-sm btn-bounce"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+
+        <!-- STEP 2: PARENT DASHBOARD PANEL -->
+        <div id="parent-panel-step" class="hidden bg-white rounded-3xl p-6 sm:p-8 border-4 border-brand-purple shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-6">
+            <div class="flex items-center justify-between border-b pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-purple-100 text-brand-purple rounded-xl flex items-center justify-center font-bold">
+                        ⚙️
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">Parent Dashboard</h3>
+                        <p class="text-xs font-semibold text-slate-500">Urus profil anak & tetapan PIN</p>
+                    </div>
+                </div>
+                <button onclick="closeParentModal()" class="text-slate-400 hover:text-slate-700 font-bold text-lg">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Manage Child Profiles -->
+            <div class="space-y-3">
+                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Profil Anak (Unlimited)</h4>
+                
+                <div id="parent-child-list" class="space-y-2">
+                    <!-- List of child profiles inserted dynamically -->
+                </div>
+
+                <!-- Add New Child Form -->
+                <div class="flex gap-2 pt-2">
+                    <input type="text" id="new-child-name" placeholder="Nama Anak Baru" class="flex-1 px-4 py-2.5 rounded-2xl border-2 border-slate-200 focus:border-brand-purple focus:outline-none text-sm font-semibold">
+                    <button onclick="addNewChild()" class="bg-brand-green text-white font-bold px-4 py-2.5 rounded-2xl text-sm border-b-4 border-green-700 btn-bounce">
+                        + Tambah
+                    </button>
+                </div>
+            </div>
+
+            <hr class="border-slate-100">
+
+            <!-- Security & Account Settings -->
+            <div class="space-y-3">
+                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Keselamatan & Akaun</h4>
+
+                <div class="bg-slate-50 p-4 rounded-2xl space-y-3 border border-slate-200">
+                    <label class="text-xs font-bold text-slate-600 block">Tukar Parent PIN</label>
+                    <div class="flex gap-2">
+                        <input type="password" id="new-pin-input" maxlength="4" placeholder="4-Digit PIN Baru" class="w-full px-4 py-2 rounded-xl border border-slate-300 text-sm font-bold tracking-widest">
+                        <button onclick="updateParentPin()" class="bg-brand-purple text-white font-bold px-4 py-2 rounded-xl text-sm btn-bounce">
+                            Simpan
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-between items-center">
+                    <button onclick="handleSignOut()" class="text-brand-red font-bold text-sm hover:underline flex items-center gap-2">
+                        <i class="fas fa-sign-out-alt"></i> Log Keluar Akaun Ibu Bapa
+                    </button>
+                    <span class="text-xs font-semibold text-slate-400" id="parent-email-display">user@gmail.com</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT ENGINE -->
+    <script>
+        // ==================== FIREBASE INITIALIZATION ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCux9NdX5w90xZVADrC40s5bKFpmH9Zhm0",
+            authDomain: "kamus-bergambar-digital.firebaseapp.com",
+            databaseURL: "https://kamus-bergambar-digital-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "kamus-bergambar-digital",
+            storageBucket: "kamus-bergambar-digital.firebasestorage.app",
+            messagingSenderId: "343192722905",
+            appId: "1:343192722905:web:7d668478350e32ad1ccdc8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        // Enable auth persistence across devices
+        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+        // ==================== GLOBAL APP STATE ====================
+        let currentUser = null;
+        let parentSettings = { pin: "1234" };
+        let childProfiles = [];
+        let activeChild = null;
+        let isSoundOn = true;
+
+        // Current Navigation State
+        let currentLevel = 1;
+        let currentCategory = null;
+        let currentView = 'view-auth';
+
+        // Learn Mode State
+        let learnIndex = 0;
+
+        // Game Engine State (Anti-Repeat Question Pool)
+        let gameQuestionPool = [];
+        let currentQuestion = null;
+        let isAnswerLocked = false;
+
+        // ==================== BADGES DEFINITION ====================
+        const BADGES_DEFINITIONS = [
+            { id: 'word_explorer', title: 'Word Explorer', desc: 'Selesai 10 soalan pertama', icon: '🔍' },
+            { id: 'animal_lover', title: 'Animal Lover', desc: 'Kuasai kategori Haiwan', icon: '🦁' },
+            { id: 'food_explorer', title: 'Food Explorer', desc: 'Kuasai kategori Makanan', icon: '🍎' },
+            { id: 'bilingual_star', title: 'Bilingual Star', desc: 'Mencapai 500 markah', icon: '⭐' },
+            { id: 'streak_master', title: 'Streak Master', desc: 'Capai 10 Streak berturut-turut', icon: '🔥' },
+            { id: 'super_learner', title: 'Super Learner', desc: 'Mencapai 1,000 markah', icon: '🚀' },
+            { id: 'vocab_master', title: 'Vocabulary Master', desc: 'Selesai 100 soalan', icon: '👑' }
+        ];
+
+        // ==================== CATEGORIES & DICTIONARY SEED DATA ====================
+        // Categories list for Level 1 & Level 2
+        const LEVEL_1_CATEGORIES = [
+            "Keluarga", "Tubuh Badan", "Emosi", "Pakaian", "Kasut & Aksesori", "Nombor",
+            "Bahagian Rumah", "Barang Rumah", "Dapur", "Bilik Tidur", "Makanan", "Minuman",
+            "Sekolah", "Alat Tulis", "Kenderaan Darat", "Kenderaan Udara", "Jalan Raya", "Makanan Kegemaran",
+            "Haiwan Peliharaan", "Haiwan Liar", "Haiwan Ladang", "Burung", "Haiwan Air", "Serangga",
+            "Alam Semula Jadi", "Cuaca", "Buah-buahan", "Sayur-sayuran", "Warna", "Bentuk & Saiz", "Ucapan Harian"
+        ];
+
+        const LEVEL_2_CATEGORIES = [
+            "Keluarga & Hubungan", "Tubuh Badan & Kesihatan", "Emosi & Perasaan", "Kesihatan & Kecergasan", "Pakaian & Aksesori", "Rumah & Kehidupan",
+            "Sekolah & Kemudahan", "Alat Tulis & Bahan", "Aktiviti Pembelajaran", "Sains Asas", "Matematik", "Teknologi & Komputer",
+            "Tumbuhan", "Haiwan", "Serangga & Haiwan Kecil", "Hidupan Air", "Cuaca & Iklim", "Bumi & Alam Sekitar",
+            "Kitar Semula", "Angkasa Lepas", "Makanan & Nutrisi", "Buah & Sayur", "Pemakanan", "Peralatan Dapur",
+            "Pengangkutan", "Keselamatan Jalan Raya", "Tempat Awam", "Pekerjaan", "Kedai & Membeli-belah", "Komuniti",
+            "Malaysia", "Perayaan & Kebudayaan", "Makanan Tradisional", "Seni & Kebudayaan", "Sejarah & Warisan", "Geografi",
+            "Nilai Murni", "Kata Kerja", "Kata Adjektif", "Perkataan & Ungkapan"
+        ];
+
+        // Sample dictionary dataset generator for consistent dynamic 2D illustrations
+        function getDictionaryWords(level, category) {
+            // Generating structured words with dynamic visual illustration URLs
+            const wordsSample = [
+                { bm: "Kucing", en: "Cat", svg: "🐱" },
+                { bm: "Anjing", en: "Dog", svg: "🐶" },
+                { bm: "Burung", en: "Bird", svg: "🐦" },
+                { bm: "Ikan", en: "Fish", svg: "🐟" },
+                { bm: "Epal", en: "Apple", svg: "🍎" },
+                { bm: "Pisang", en: "Banana", svg: "🍌" },
+                { bm: "Kereta", en: "Car", svg: "🚗" },
+                { bm: "Bas", en: "Bus", svg: "🚌" },
+                { bm: "Rumah", en: "House", svg: "🏠" },
+                { bm: "Buku", en: "Book", svg: "📖" },
+                { bm: "Bintang", en: "Star", svg: "⭐" },
+                { bm: "Matahari", en: "Sun", svg: "☀️" },
+                { bm: "Bunga", en: "Flower", svg: "🌸" },
+                { bm: "Pokok", en: "Tree", svg: "🌳" },
+                { bm: "Gajah", en: "Elephant", svg: "🐘" }
+            ];
+
+            // Generating placeholder SVG illustration data URLs for 2D visual presentation
+            return wordsSample.map((item, idx) => {
+                const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+                    <rect width="100%" height="100%" fill="#FFF9E6" rx="20"/>
+                    <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-size="80">${item.svg}</text>
+                    <text x="50%" y="80%" dominant-baseline="middle" text-anchor="middle" font-size="18" font-family="sans-serif" font-weight="bold" fill="#5271FF">${item.bm} / ${item.en}</text>
+                </svg>`;
+                const encodedSvg = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgContent);
+
+                return {
+                    id: `${level}_${category}_${idx}`,
+                    bm: item.bm,
+                    en: item.en,
+                    image: encodedSvg,
+                    category: category,
+                    level: level
+                };
+            });
+        }
+
+        // ==================== AUDIO FEEDBACK SYSTEM ====================
+        function playBeep(type) {
+            if (!isSoundOn) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'correct') {
+                    // 1 Beep - Soft High Pitch
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.25);
+                } else if (type === 'wrong') {
+                    // 2 Beeps - Soft Low Pitch
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, ctx.currentTime); // A3
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.15);
+
+                    setTimeout(() => {
+                        const osc2 = ctx.createOscillator();
+                        const gain2 = ctx.createGain();
+                        osc2.connect(gain2);
+                        gain2.connect(ctx.destination);
+                        osc2.type = 'triangle';
+                        osc2.frequency.setValueAtTime(196, ctx.currentTime); // G3
+                        gain2.gain.setValueAtTime(0.1, ctx.currentTime);
+                        gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+                        osc2.start();
+                        osc2.stop(ctx.currentTime + 0.2);
+                    }, 180);
+                }
+            } catch (e) {
+                console.log("Audio not supported or blocked");
+            }
+        }
+
+        function toggleSound() {
+            isSoundOn = !isSoundOn;
+            const soundBtn = document.getElementById('sound-btn');
+            soundBtn.innerHTML = isSoundOn ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute text-slate-400"></i>';
+        }
+
+        // ==================== NAVIGATION CONTROLLER ====================
+        function navigateTo(viewId, params = {}) {
+            document.querySelectorAll('.view-screen').forEach(el => el.classList.add('hidden'));
+            const targetView = document.getElementById(viewId);
+            if (targetView) targetView.classList.remove('hidden');
+            currentView = viewId;
+
+            if (viewId === 'view-level-select') {
+                if (params.mode === 'learn') {
+                    document.getElementById('level-select-title').innerText = "Belajar Kamus — Pilih Level";
+                    window.appMode = 'learn';
+                } else {
+                    document.getElementById('level-select-title').innerText = "Main Game — Pilih Level";
+                    window.appMode = 'game';
+                }
+            } else if (viewId === 'view-achievements') {
+                renderBadgesView();
+            }
+        }
+
+        // ==================== AUTHENTICATION & SYNC ====================
+        let isSignUpMode = false;
+
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('auth-title').innerText = isSignUpMode ? "Cipta Akaun Ibu Bapa" : "Selamat Datang!";
+            document.getElementById('auth-subtitle').innerText = isSignUpMode ? "Satu akaun untuk mengurus profil anak-anak" : "Satu akaun untuk semua peranti sekeluarga";
+            document.getElementById('name-field-group').classList.toggle('hidden', !isSignUpMode);
+            document.getElementById('auth-submit-btn').innerText = isSignUpMode ? "Daftar Akaun" : "Log Masuk";
+            document.getElementById('auth-toggle-text').innerText = isSignUpMode ? "Sudah ada akaun?" : "Belum ada akaun ibu bapa?";
+            document.getElementById('auth-toggle-btn').innerText = isSignUpMode ? "Log Masuk" : "Daftar Sini";
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const name = document.getElementById('auth-name').value;
+
+            if (isSignUpMode) {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        const uid = userCredential.user.uid;
+                        // Initialize Parent Settings
+                        db.ref(`users/${uid}/parentSettings`).set({
+                            name: name || "Parent",
+                            pin: "1234"
+                        });
+                    })
+                    .catch(err => alert("Ralat Pendaftaran: " + err.message));
+            } else {
+                auth.signInWithEmailAndPassword(email, password)
+                    .catch(err => alert("Ralat Log Masuk: " + err.message));
+            }
+        }
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('parent-email-display').innerText = user.email;
+
+                // Sync Parent Data & Child Profiles from Cloud
+                db.ref(`users/${user.uid}`).on('value', (snapshot) => {
+                    const data = snapshot.val() || {};
+                    parentSettings = data.parentSettings || { pin: "1234" };
+                    
+                    const childrenData = data.children || {};
+                    childProfiles = Object.keys(childrenData).map(key => ({
+                        id: key,
+                        ...childrenData[key]
+                    }));
+
+                    if (activeChild) {
+                        // Refresh active child reference
+                        const updatedActive = childProfiles.find(c => c.id === activeChild.id);
+                        if (updatedActive) activeChild = updatedActive;
+                        updateChildHeaderUI();
+                    }
+
+                    if (currentView === 'view-auth') {
+                        if (childProfiles.length > 0) {
+                            renderChildProfiles();
+                            navigateTo('view-child-select');
+                        } else {
+                            openParentModal();
+                            showParentPanel();
+                        }
+                    }
+                });
+            } else {
+                currentUser = null;
+                activeChild = null;
+                document.getElementById('header-profile').classList.add('hidden');
+                navigateTo('view-auth');
+            }
+        });
+
+        function handleSignOut() {
+            closeParentModal();
+            auth.signOut();
+        }
+
+        // ==================== CHILD PROFILE ENGINE ====================
+        function renderChildProfiles() {
+            const grid = document.getElementById('child-profiles-grid');
+            grid.innerHTML = '';
+
+            childProfiles.forEach(child => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-3xl border-4 border-brand-yellow card-shadow-yellow cursor-pointer btn-bounce text-center space-y-2";
+                card.onclick = () => selectChildProfile(child.id);
+                card.innerHTML = `
+                    <div class="w-16 h-16 bg-brand-yellow/30 text-3xl rounded-2xl mx-auto flex items-center justify-center border-2 border-brand-yellow">
+                        👦
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-800">${child.name}</h3>
+                    <div class="text-xs font-bold text-slate-500 bg-slate-100 py-1 px-2 rounded-xl">
+                        ⭐ ${child.score || 0} pts
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectChildProfile(childId) {
+            activeChild = childProfiles.find(c => c.id === childId);
+            if (!activeChild) return;
+
+            // Ensure child data structures exist
+            if (!activeChild.score) activeChild.score = 0;
+            if (!activeChild.streak) activeChild.streak = 0;
+            if (!activeChild.badges) activeChild.badges = {};
+
+            updateChildHeaderUI();
+            updateHomeScreenUI();
+            navigateTo('view-home');
+        }
+
+        function updateChildHeaderUI() {
+            if (!activeChild) return;
+            document.getElementById('header-profile').classList.remove('hidden');
+            document.getElementById('header-child-name').innerText = activeChild.name;
+        }
+
+        function updateHomeScreenUI() {
+            if (!activeChild) return;
+            document.getElementById('home-child-name').innerText = activeChild.name;
+            document.getElementById('home-score').innerText = (activeChild.score || 0).toLocaleString();
+            document.getElementById('home-streak').innerText = activeChild.streak || 0;
+            
+            const badgesUnlocked = Object.keys(activeChild.badges || {}).length;
+            document.getElementById('home-badges-count').innerText = `${badgesUnlocked}/${BADGES_DEFINITIONS.length}`;
+        }
+
+        function saveChildProgress() {
+            if (!currentUser || !activeChild) return;
+            db.ref(`users/${currentUser.uid}/children/${activeChild.id}`).update({
+                score: activeChild.score || 0,
+                streak: activeChild.streak || 0,
+                bestStreak: activeChild.bestStreak || 0,
+                badges: activeChild.badges || {},
+                categoryMastery: activeChild.categoryMastery || {}
+            });
+        }
+
+        // ==================== PARENT MODE & PIN SECURITY ====================
+        let enteredPin = "";
+
+        function openParentModal() {
+            enteredPin = "";
+            updatePinDots();
+            document.getElementById('parent-pin-step').classList.remove('hidden');
+            document.getElementById('parent-panel-step').classList.add('hidden');
+            document.getElementById('parent-modal').classList.remove('hidden');
+        }
+
+        function closeParentModal() {
+            document.getElementById('parent-modal').classList.add('hidden');
+        }
+
+        function pressPin(num) {
+            if (enteredPin.length < 4) {
+                enteredPin += num;
+                updatePinDots();
+            }
+            if (enteredPin.length === 4) {
+                verifyPin();
+            }
+        }
+
+        function clearPin() {
+            enteredPin = "";
+            updatePinDots();
+        }
+
+        function updatePinDots() {
+            const dots = document.querySelectorAll('.pin-dot');
+            dots.forEach((dot, idx) => {
+                if (idx < enteredPin.length) {
+                    dot.classList.add('bg-brand-purple', 'border-brand-purple');
+                } else {
+                    dot.classList.remove('bg-brand-purple', 'border-brand-purple');
+                }
+            });
+        }
+
+        function verifyPin() {
+            const correctPin = parentSettings.pin || "1234";
+            if (enteredPin === correctPin) {
+                showParentPanel();
+            } else {
+                playBeep('wrong');
+                alert("PIN Salah! Sila cuba lagi.");
+                clearPin();
+            }
+        }
+
+        function showParentPanel() {
+            document.getElementById('parent-pin-step').classList.add('hidden');
+            document.getElementById('parent-panel-step').classList.remove('hidden');
+            renderParentChildList();
+        }
+
+        function renderParentChildList() {
+            const container = document.getElementById('parent-child-list');
+            container.innerHTML = '';
+
+            childProfiles.forEach(child => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-200";
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-xl">👦</span>
+                        <div>
+                            <span class="font-bold text-slate-800 text-sm block">${child.name}</span>
+                            <span class="text-xs text-slate-500 font-semibold">Markah: ${child.score || 0}</span>
+                        </div>
+                    </div>
+                    <button onclick="deleteChildProfile('${child.id}')" class="text-brand-red hover:bg-red-50 p-2 rounded-xl text-xs font-bold btn-bounce">
+                        <i class="fas fa-trash"></i> Padam
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function addNewChild() {
+            const nameInput = document.getElementById('new-child-name');
+            const name = nameInput.value.trim();
+            if (!name) return alert("Sila masukkan nama anak.");
+
+            if (!currentUser) return;
+            const newRef = db.ref(`users/${currentUser.uid}/children`).push();
+            newRef.set({
+                name: name,
+                score: 0,
+                streak: 0,
+                created_at: Date.now()
+            }).then(() => {
+                nameInput.value = '';
+                renderParentChildList();
+            });
+        }
+
+        function deleteChildProfile(childId) {
+            if (!confirm("Adakah anda pasti mahu memadam profil ini?")) return;
+            db.ref(`users/${currentUser.uid}/children/${childId}`).remove().then(() => {
+                if (activeChild && activeChild.id === childId) {
+                    activeChild = null;
+                    document.getElementById('header-profile').classList.add('hidden');
+                }
+                renderParentChildList();
+            });
+        }
+
+        function updateParentPin() {
+            const newPin = document.getElementById('new-pin-input').value.trim();
+            if (newPin.length !== 4 || isNaN(newPin)) {
+                return alert("PIN mestilah 4 digit nombor sahaja.");
+            }
+
+            db.ref(`users/${currentUser.uid}/parentSettings/pin`).set(newPin).then(() => {
+                alert("PIN Parent Mode berjaya dikemas kini!");
+                document.getElementById('new-pin-input').value = '';
+                parentSettings.pin = newPin;
+            });
+        }
+
+        // ==================== LEVEL & CATEGORY SELECTION ====================
+        function selectLevel(levelNum) {
+            currentLevel = levelNum;
+            document.getElementById('current-level-label').innerText = levelNum === 1 ? "Level 1 — Prasekolah" : "Level 2 — Sekolah Rendah";
+            renderCategoriesGrid();
+            navigateTo('view-category-select');
+        }
+
+        function renderCategoriesGrid() {
+            const grid = document.getElementById('categories-grid');
+            grid.innerHTML = '';
+
+            const categories = currentLevel === 1 ? LEVEL_1_CATEGORIES : LEVEL_2_CATEGORIES;
+
+            categories.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-3xl border-3 border-brand-yellow card-shadow-yellow cursor-pointer btn-bounce text-center space-y-2 hover:border-brand-orange transition-colors flex flex-col justify-between";
+                card.onclick = () => selectCategory(cat);
+                card.innerHTML = `
+                    <div class="w-12 h-12 bg-amber-100 text-2xl rounded-2xl mx-auto flex items-center justify-center">
+                        📁
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm leading-tight">${cat}</h4>
+                    <div class="text-[10px] font-extrabold text-amber-600 bg-amber-50 py-1 px-2 rounded-full">
+                        ⭐⭐⭐ 50 Perkataan
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectCategory(categoryName) {
+            currentCategory = categoryName;
+
+            if (window.appMode === 'learn') {
+                startLearnMode();
+            } else {
+                startGameMode();
+            }
+        }
+
+        // ==================== MODE 1: LEARN MODE (KAMUS) ====================
+        let learnWordsList = [];
+
+        function startLearnMode() {
+            learnWordsList = getDictionaryWords(currentLevel, currentCategory);
+            learnIndex = 0;
+            document.getElementById('learn-category-title').innerText = currentCategory;
+            renderLearnCard();
+            navigateTo('view-learn');
+        }
+
+        function renderLearnCard() {
+            const word = learnWordsList[learnIndex];
+            if (!word) return;
+
+            document.getElementById('learn-card-counter').innerText = `${learnIndex + 1}/${learnWordsList.length}`;
+            document.getElementById('learn-image').src = word.image;
+            document.getElementById('learn-bm').innerText = word.bm;
+            document.getElementById('learn-en').innerText = word.en;
+        }
+
+        function nextLearnCard() {
+            if (learnIndex < learnWordsList.length - 1) {
+                learnIndex++;
+                renderLearnCard();
+            } else {
+                learnIndex = 0;
+                renderLearnCard();
+            }
+        }
+
+        function prevLearnCard() {
+            if (learnIndex > 0) {
+                learnIndex--;
+                renderLearnCard();
+            }
+        }
+
+        // ==================== MODE 2: GAME ENGINE & ANTI-REPEAT POOL ====================
+        function startGameMode() {
+            // Generate unlimited Question Pool using Anti-Repeat Logic
+            initQuestionPool();
+            updateGameHUD();
+            nextGameQuestion();
+            navigateTo('view-game');
+        }
+
+        function initQuestionPool() {
+            const categoryWords = getDictionaryWords(currentLevel, currentCategory);
+            gameQuestionPool = [];
+
+            // Build diverse question variations for each word to prevent repetitions
+            categoryWords.forEach(word => {
+                // Question Type 1: Select correct picture by BM
+                gameQuestionPool.push({
+                    type: 'PICTURE_BY_BM',
+                    prompt: `Mana satu gambar "${word.bm}"?`,
+                    targetWord: word,
+                    hasImagePrompt: false
+                });
+
+                // Question Type 2: Select correct BM word by Image
+                gameQuestionPool.push({
+                    type: 'BM_BY_IMAGE',
+                    prompt: `Apakah nama perkataan ini dalam Bahasa Melayu?`,
+                    targetWord: word,
+                    hasImagePrompt: true
+                });
+
+                // Question Type 3: BM -> BI translation
+                gameQuestionPool.push({
+                    type: 'BM_TO_BI',
+                    prompt: `Apakah perkataan Bahasa Inggeris untuk "${word.bm}"?`,
+                    targetWord: word,
+                    hasImagePrompt: false
+                });
+
+                // Question Type 4: BI -> BM translation
+                gameQuestionPool.push({
+                    type: 'BI_TO_BM',
+                    prompt: `Apakah perkataan Bahasa Melayu untuk "${word.en}"?`,
+                    targetWord: word,
+                    hasImagePrompt: false
+                });
+            });
+
+            // Randomize Question Pool Shuffle
+            gameQuestionPool.sort(() => Math.random() - 0.5);
+        }
+
+        function updateGameHUD() {
+            if (!activeChild) return;
+            document.getElementById('game-score').innerText = (activeChild.score || 0).toLocaleString();
+            document.getElementById('game-streak').innerText = activeChild.streak || 0;
+        }
+
+        function nextGameQuestion() {
+            isAnswerLocked = false;
+            document.getElementById('game-feedback-area').classList.add('hidden');
+            document.getElementById('retry-btn').classList.add('hidden');
+
+            // Reset Question Pool if depleted (Anti-repeat completed full cycle)
+            if (gameQuestionPool.length === 0) {
+                initQuestionPool();
+            }
+
+            // Pop next unique question from pool
+            currentQuestion = gameQuestionPool.pop();
+
+            // Render Prompt & Image
+            document.getElementById('game-prompt').innerText = currentQuestion.prompt;
+            const imageBox = document.getElementById('game-image-box');
+            
+            if (currentQuestion.hasImagePrompt) {
+                imageBox.classList.remove('hidden');
+                document.getElementById('game-image').src = currentQuestion.targetWord.image;
+            } else {
+                imageBox.classList.add('hidden');
+            }
+
+            // Generate Options Grid
+            renderGameOptions();
+        }
+
+        function renderGameOptions() {
+            const grid = document.getElementById('game-options-grid');
+            grid.innerHTML = '';
+
+            const allCategoryWords = getDictionaryWords(currentLevel, currentCategory);
+            const target = currentQuestion.targetWord;
+
+            // Select 3 distractors
+            const distractors = allCategoryWords
+                .filter(w => w.id !== target.id)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+
+            const options = [target, ...distractors].sort(() => Math.random() - 0.5);
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold p-4 rounded-2xl border-2 border-slate-200 btn-bounce text-lg flex items-center justify-center gap-3 transition-colors";
+
+                if (currentQuestion.type === 'PICTURE_BY_BM') {
+                    btn.innerHTML = `<img src="${opt.image}" class="w-16 h-16 object-contain">`;
+                } else if (currentQuestion.type === 'BM_TO_BI') {
+                    btn.innerText = opt.en;
+                } else {
+                    btn.innerText = opt.bm;
+                }
+
+                btn.onclick = () => handleOptionSelect(btn, opt.id === target.id);
+                grid.appendChild(btn);
+            });
+        }
+
+        function handleOptionSelect(btnElement, isCorrect) {
+            if (isAnswerLocked) return;
+
+            if (isCorrect) {
+                isAnswerLocked = true;
+                // Correct Answer Flow
+                btnElement.classList.remove('bg-slate-50', 'border-slate-200');
+                btnElement.classList.add('bg-brand-green', 'text-white', 'border-green-700');
+
+                playBeep('correct');
+
+                // Update Scoring
+                if (activeChild) {
+                    activeChild.score = (activeChild.score || 0) + 10;
+                    activeChild.streak = (activeChild.streak || 0) + 1;
+                    if (activeChild.streak > (activeChild.bestStreak || 0)) {
+                        activeChild.bestStreak = activeChild.streak;
+                    }
+                    checkBadgesUnlock();
+                    saveChildProgress();
+                    updateGameHUD();
+                }
+
+                // Show Brief Feedback
+                const feedbackArea = document.getElementById('game-feedback-area');
+                const feedbackBox = document.getElementById('game-feedback-box');
+                const feedbackText = document.getElementById('game-feedback-text');
+
+                feedbackArea.classList.remove('hidden');
+                feedbackBox.className = "p-3 rounded-2xl font-bold text-center text-lg flex items-center justify-center gap-2 bg-green-100 text-green-800 border-2 border-green-300";
+                feedbackText.innerText = "Betul! 🎉 (+10 pts)";
+
+                // AUTO Next Question without Submit button
+                setTimeout(() => {
+                    nextGameQuestion();
+                }, 1000);
+
+            } else {
+                // Wrong Answer Flow
+                btnElement.classList.remove('bg-slate-50', 'border-slate-200');
+                btnElement.classList.add('bg-brand-red', 'text-white', 'border-red-700', 'animate-shake');
+
+                playBeep('wrong');
+
+                if (activeChild) {
+                    activeChild.streak = 0; // Reset streak on error
+                    saveChildProgress();
+                    updateGameHUD();
+                }
+
+                // Show "Sila Cuba Lagi" Button
+                const feedbackArea = document.getElementById('game-feedback-area');
+                const feedbackBox = document.getElementById('game-feedback-box');
+                const feedbackText = document.getElementById('game-feedback-text');
+
+                feedbackArea.classList.remove('hidden');
+                feedbackBox.className = "p-3 rounded-2xl font-bold text-center text-lg flex items-center justify-center gap-2 bg-red-100 text-red-800 border-2 border-red-300";
+                feedbackText.innerText = "Sila Cuba Lagi 😅";
+
+                document.getElementById('retry-btn').classList.remove('hidden');
+            }
+        }
+
+        function retryQuestion() {
+            // Re-render current question so child can try again
+            renderGameOptions();
+            document.getElementById('game-feedback-area').classList.add('hidden');
+            document.getElementById('retry-btn').classList.add('hidden');
+        }
+
+        // ==================== BADGES & ACHIEVEMENTS ENGINE ====================
+        function checkBadgesUnlock() {
+            if (!activeChild) return;
+            if (!activeChild.badges) activeChild.badges = {};
+
+            const score = activeChild.score || 0;
+            const streak = activeChild.streak || 0;
+
+            if (score >= 10 && !activeChild.badges['word_explorer']) activeChild.badges['word_explorer'] = Date.now();
+            if (score >= 500 && !activeChild.badges['bilingual_star']) activeChild.badges['bilingual_star'] = Date.now();
+            if (score >= 1000 && !activeChild.badges['super_learner']) activeChild.badges['super_learner'] = Date.now();
+            if (streak >= 10 && !activeChild.badges['streak_master']) activeChild.badges['streak_master'] = Date.now();
+        }
+
+        function renderBadgesView() {
+            const grid = document.getElementById('badges-grid');
+            grid.innerHTML = '';
+
+            const unlocked = activeChild ? (activeChild.badges || {}) : {};
+
+            BADGES_DEFINITIONS.forEach(badge => {
+                const isUnlocked = !!unlocked[badge.id];
+                const card = document.createElement('div');
+                card.className = `p-5 rounded-3xl border-4 text-center space-y-2 ${isUnlocked ? 'bg-white border-brand-yellow card-shadow-yellow' : 'bg-slate-100 border-slate-300 opacity-60'}`;
+                card.innerHTML = `
+                    <div class="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-4xl ${isUnlocked ? 'bg-amber-100' : 'bg-slate-200'}">
+                        ${badge.icon}
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-base">${badge.title}</h4>
+                    <p class="text-xs text-slate-500 font-semibold">${badge.desc}</p>
+                    <span class="inline-block mt-2 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider ${isUnlocked ? 'bg-brand-green text-white' : 'bg-slate-300 text-slate-600'}">
+                        ${isUnlocked ? 'DIBUKA 🏆' : 'TERKUNCI 🔒'}
+                    </span>
+                `;
+                grid.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
