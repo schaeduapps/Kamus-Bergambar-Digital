@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts (Fredoka & Quicksand for Kid-friendly UI) -->
+    <!-- Google Fonts (Fredoka & Quicksand) -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     
     <!-- Firebase SDKs -->
@@ -196,7 +196,6 @@
 
         <!-- ==================== VIEW 3: HOME / DASHBOARD ==================== -->
         <section id="view-home" class="view-screen hidden space-y-6">
-            <!-- Top Child Stats Bar -->
             <div class="bg-white rounded-3xl p-5 border-4 border-brand-yellow shadow-lg flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
                     <div class="w-16 h-16 bg-brand-yellow rounded-2xl flex items-center justify-center text-3xl shadow-inner border-2 border-brand-orange">
@@ -211,29 +210,28 @@
                 <div class="flex items-center gap-3 sm:gap-6 ml-auto">
                     <div class="text-center bg-amber-50 px-3 py-1.5 rounded-2xl border border-amber-200">
                         <span class="text-xs font-bold text-amber-600 uppercase block">⭐ Markah</span>
-                        <span id="home-score" class="text-xl font-bold text-slate-800">1,250</span>
+                        <span id="home-score" class="text-xl font-bold text-slate-800">0</span>
                     </div>
 
                     <div class="text-center bg-orange-50 px-3 py-1.5 rounded-2xl border border-orange-200">
                         <span class="text-xs font-bold text-orange-600 uppercase block">🔥 Streak</span>
-                        <span id="home-streak" class="text-xl font-bold text-slate-800">8</span>
+                        <span id="home-streak" class="text-xl font-bold text-slate-800">0</span>
                     </div>
 
                     <div class="text-center bg-purple-50 px-3 py-1.5 rounded-2xl border border-purple-200">
                         <span class="text-xs font-bold text-purple-600 uppercase block">🏆 Lencana</span>
-                        <span id="home-badges-count" class="text-xl font-bold text-slate-800">3/7</span>
+                        <span id="home-badges-count" class="text-xl font-bold text-slate-800">0/7</span>
                     </div>
                 </div>
             </div>
 
             <!-- Main Action Cards Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <!-- CONTINUE / PLAY -->
-                <div onclick="navigateTo('view-level-select')" class="bg-gradient-to-br from-brand-yellow to-amber-400 p-6 rounded-3xl border-4 border-amber-500 card-shadow-yellow cursor-pointer btn-bounce relative overflow-hidden flex flex-col justify-between min-h-[180px]">
+                <div onclick="navigateTo('view-level-select', {mode: 'game'})" class="bg-gradient-to-br from-brand-yellow to-amber-400 p-6 rounded-3xl border-4 border-amber-500 card-shadow-yellow cursor-pointer btn-bounce relative overflow-hidden flex flex-col justify-between min-h-[180px]">
                     <div class="z-10">
                         <span class="bg-white/80 backdrop-blur-md text-amber-900 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">Mula Permainan</span>
                         <h3 class="text-3xl font-extrabold text-slate-900 mt-2">MAIN GAME 🎮</h3>
-                        <p class="text-amber-900 text-sm font-semibold mt-1">Uji minda & kumpul markah tanpa had!</p>
+                        <p class="text-amber-900 text-sm font-semibold mt-1">Uji minda & kumpul markah mengikut kategori!</p>
                     </div>
                     <div class="z-10 mt-4">
                         <span class="bg-slate-900 text-white font-bold px-5 py-2.5 rounded-2xl text-sm inline-flex items-center gap-2 shadow-lg">
@@ -243,7 +241,6 @@
                     <div class="absolute -right-4 -bottom-4 text-8xl opacity-20 pointer-events-none">🕹️</div>
                 </div>
 
-                <!-- LEARN / KAMUS -->
                 <div onclick="navigateTo('view-level-select', {mode: 'learn'})" class="bg-gradient-to-br from-brand-blue to-indigo-500 p-6 rounded-3xl border-4 border-indigo-700 card-shadow-blue cursor-pointer btn-bounce relative overflow-hidden flex flex-col justify-between min-h-[180px] text-white">
                     <div class="z-10">
                         <span class="bg-white/20 backdrop-blur-md text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">Mod Belajar</span>
@@ -294,13 +291,12 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-                <!-- LEVEL 1 -->
                 <div onclick="selectLevel(1)" class="bg-white p-6 rounded-3xl border-4 border-brand-pink card-shadow-orange cursor-pointer btn-bounce text-center space-y-4 hover:border-brand-orange transition-colors">
                     <div class="w-24 h-24 bg-pink-100 text-pink-500 rounded-3xl mx-auto flex items-center justify-center text-5xl shadow-inner">
                         🎈
                     </div>
                     <div>
-                        <span class="bg-brand-pink text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">31 Kategori (1,550 Perkataan)</span>
+                        <span class="bg-brand-pink text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">31 Kategori</span>
                         <h3 class="text-2xl font-bold text-slate-800 mt-2">LEVEL 1 — PRASEKOLAH</h3>
                         <p class="text-slate-500 font-semibold text-sm mt-1">Umur 4 hingga 6 Tahun</p>
                     </div>
@@ -311,13 +307,12 @@
                     </div>
                 </div>
 
-                <!-- LEVEL 2 -->
                 <div onclick="selectLevel(2)" class="bg-white p-6 rounded-3xl border-4 border-brand-blue card-shadow-blue cursor-pointer btn-bounce text-center space-y-4 hover:border-indigo-600 transition-colors">
                     <div class="w-24 h-24 bg-blue-100 text-brand-blue rounded-3xl mx-auto flex items-center justify-center text-5xl shadow-inner">
                         🚀
                     </div>
                     <div>
-                        <span class="bg-brand-blue text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">40 Kategori (2,000 Perkataan)</span>
+                        <span class="bg-brand-blue text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">40 Kategori</span>
                         <h3 class="text-2xl font-bold text-slate-800 mt-2">LEVEL 2 — SEKOLAH RENDAH</h3>
                         <p class="text-slate-500 font-semibold text-sm mt-1">Umur 7 hingga 12 Tahun</p>
                     </div>
@@ -345,7 +340,7 @@
 
             <!-- Category Grid -->
             <div id="categories-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 max-h-[65vh] overflow-y-auto p-1">
-                <!-- Dynamic Category Cards Inserted Here -->
+                <!-- Dynamic Category Cards -->
             </div>
         </section>
 
@@ -356,23 +351,19 @@
                     <i class="fas fa-arrow-left mr-1"></i> Kategori
                 </button>
                 <span id="learn-category-title" class="text-lg font-bold text-brand-purple truncate max-w-[200px]">Kategori</span>
-                <span id="learn-card-counter" class="text-xs font-extrabold bg-brand-yellow px-3 py-1 rounded-full text-slate-800">1/50</span>
+                <span id="learn-card-counter" class="text-xs font-extrabold bg-brand-yellow px-3 py-1 rounded-full text-slate-800">1/5</span>
             </div>
 
-            <!-- Big Flashcard -->
             <div class="bg-white rounded-3xl p-6 border-4 border-brand-yellow shadow-xl text-center space-y-4">
-                <!-- Illustration Frame -->
                 <div id="learn-image-container" class="w-full h-56 sm:h-64 bg-slate-50 rounded-2xl border-2 border-slate-100 flex items-center justify-center overflow-hidden p-4 relative">
                     <img id="learn-image" src="" alt="Word Illustration" class="max-h-full max-w-full object-contain">
                 </div>
 
-                <!-- Word Names -->
                 <div class="space-y-1">
-                    <h3 id="learn-bm" class="text-3xl font-extrabold text-slate-800 uppercase tracking-wide">KUCING</h3>
-                    <p id="learn-en" class="text-xl font-bold text-brand-blue capitalize">CAT</p>
+                    <h3 id="learn-bm" class="text-3xl font-extrabold text-slate-800 uppercase tracking-wide">-</h3>
+                    <p id="learn-en" class="text-xl font-bold text-brand-blue capitalize">-</p>
                 </div>
 
-                <!-- Navigation Controls -->
                 <div class="flex items-center justify-between gap-4 pt-4">
                     <button onclick="prevLearnCard()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-2xl border-2 border-slate-300 btn-bounce">
                         <i class="fas fa-chevron-left mr-1"></i> Sebelum
@@ -386,7 +377,6 @@
 
         <!-- ==================== VIEW 7: GAME MODE ==================== -->
         <section id="view-game" class="view-screen hidden space-y-5 max-w-xl mx-auto w-full">
-            <!-- Game HUD -->
             <div class="bg-white rounded-2xl p-3 border-2 border-brand-yellow shadow-md flex items-center justify-between">
                 <button onclick="navigateTo('view-category-select')" class="text-slate-400 hover:text-slate-700 font-bold px-2 py-1 text-sm">
                     <i class="fas fa-times text-lg"></i>
@@ -395,37 +385,32 @@
                 <div class="flex items-center gap-4">
                     <div class="flex items-center gap-1">
                         <span class="text-amber-500 font-bold">⭐</span>
-                        <span id="game-score" class="font-extrabold text-slate-800">1,250</span>
+                        <span id="game-score" class="font-extrabold text-slate-800">0</span>
                     </div>
                     <div class="flex items-center gap-1">
                         <span class="text-orange-500 font-bold">🔥</span>
-                        <span id="game-streak" class="font-extrabold text-slate-800">8</span>
+                        <span id="game-streak" class="font-extrabold text-slate-800">0</span>
                     </div>
                 </div>
 
-                <div class="text-xs font-bold bg-brand-purple/10 text-brand-purple px-2.5 py-1 rounded-full">
-                    Tanpa Had
+                <div id="game-category-badge" class="text-xs font-bold bg-brand-purple/10 text-brand-purple px-2.5 py-1 rounded-full truncate max-w-[120px]">
+                    Kategori
                 </div>
             </div>
 
-            <!-- Question Card Container -->
             <div id="game-card" class="bg-white rounded-3xl p-5 sm:p-6 border-4 border-brand-yellow shadow-xl text-center space-y-5 transition-all">
-                <!-- Question Prompt -->
                 <h3 id="game-prompt" class="text-xl sm:text-2xl font-bold text-brand-purple">
                     Apakah nama gambar ini?
                 </h3>
 
-                <!-- Optional Target Image (For Picture Questions) -->
                 <div id="game-image-box" class="w-full h-44 sm:h-52 bg-slate-50 rounded-2xl border-2 border-slate-100 flex items-center justify-center p-3 overflow-hidden">
                     <img id="game-image" src="" alt="Question Image" class="max-h-full max-w-full object-contain">
                 </div>
 
-                <!-- Multiple Choice Options Container -->
                 <div id="game-options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                    <!-- Dynamic Option Buttons Inserted Here -->
+                    <!-- Option Buttons -->
                 </div>
 
-                <!-- Feedback Message Overlay / Retry Button -->
                 <div id="game-feedback-area" class="hidden pt-2">
                     <div id="game-feedback-box" class="p-3 rounded-2xl font-bold text-center text-lg flex items-center justify-center gap-2">
                         <span id="game-feedback-text">Betul! 🎉</span>
@@ -448,7 +433,7 @@
             </div>
 
             <div id="badges-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <!-- Badges will be dynamically populated -->
+                <!-- Badges dynamically rendered -->
             </div>
         </section>
 
@@ -461,7 +446,6 @@
 
     <!-- ==================== MODAL: PARENT MODE & PIN ==================== -->
     <div id="parent-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <!-- STEP 1: PIN CHALLENGE -->
         <div id="parent-pin-step" class="bg-white rounded-3xl p-6 sm:p-8 border-4 border-brand-purple shadow-2xl max-w-md w-full text-center space-y-5">
             <div class="w-16 h-16 bg-purple-100 text-brand-purple text-3xl rounded-2xl mx-auto flex items-center justify-center">
                 🔒
@@ -471,7 +455,6 @@
                 <p class="text-xs font-semibold text-slate-500 mt-1">Masukkan 4-digit PIN keselamatan (Default: 1234)</p>
             </div>
 
-            <!-- PIN Display Dots -->
             <div id="pin-dots" class="flex justify-center gap-3 py-2">
                 <div class="w-4 h-4 rounded-full border-2 border-slate-300 pin-dot"></div>
                 <div class="w-4 h-4 rounded-full border-2 border-slate-300 pin-dot"></div>
@@ -479,7 +462,6 @@
                 <div class="w-4 h-4 rounded-full border-2 border-slate-300 pin-dot"></div>
             </div>
 
-            <!-- Numpad Grid -->
             <div class="grid grid-cols-3 gap-3 max-w-[240px] mx-auto">
                 <button onclick="pressPin('1')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl text-xl btn-bounce">1</button>
                 <button onclick="pressPin('2')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl text-xl btn-bounce">2</button>
@@ -496,7 +478,6 @@
             </div>
         </div>
 
-        <!-- STEP 2: PARENT DASHBOARD PANEL -->
         <div id="parent-panel-step" class="hidden bg-white rounded-3xl p-6 sm:p-8 border-4 border-brand-purple shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-6">
             <div class="flex items-center justify-between border-b pb-4">
                 <div class="flex items-center gap-3">
@@ -513,15 +494,13 @@
                 </button>
             </div>
 
-            <!-- Manage Child Profiles -->
             <div class="space-y-3">
-                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Profil Anak (Unlimited)</h4>
+                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Profil Anak</h4>
                 
                 <div id="parent-child-list" class="space-y-2">
-                    <!-- List of child profiles inserted dynamically -->
+                    <!-- Dynamic child profile list -->
                 </div>
 
-                <!-- Add New Child Form -->
                 <div class="flex gap-2 pt-2">
                     <input type="text" id="new-child-name" placeholder="Nama Anak Baru" class="flex-1 px-4 py-2.5 rounded-2xl border-2 border-slate-200 focus:border-brand-purple focus:outline-none text-sm font-semibold">
                     <button onclick="addNewChild()" class="bg-brand-green text-white font-bold px-4 py-2.5 rounded-2xl text-sm border-b-4 border-green-700 btn-bounce">
@@ -532,7 +511,6 @@
 
             <hr class="border-slate-100">
 
-            <!-- Security & Account Settings -->
             <div class="space-y-3">
                 <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Keselamatan & Akaun</h4>
 
@@ -573,7 +551,6 @@
         const auth = firebase.auth();
         const db = firebase.database();
 
-        // Enable auth persistence across devices
         auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
         // ==================== GLOBAL APP STATE ====================
@@ -583,15 +560,12 @@
         let activeChild = null;
         let isSoundOn = true;
 
-        // Current Navigation State
         let currentLevel = 1;
         let currentCategory = null;
         let currentView = 'view-auth';
 
-        // Learn Mode State
         let learnIndex = 0;
 
-        // Game Engine State (Anti-Repeat Question Pool)
         let gameQuestionPool = [];
         let currentQuestion = null;
         let isAnswerLocked = false;
@@ -599,16 +573,15 @@
         // ==================== BADGES DEFINITION ====================
         const BADGES_DEFINITIONS = [
             { id: 'word_explorer', title: 'Word Explorer', desc: 'Selesai 10 soalan pertama', icon: '🔍' },
-            { id: 'animal_lover', title: 'Animal Lover', desc: 'Kuasai kategori Haiwan', icon: '🦁' },
-            { id: 'food_explorer', title: 'Food Explorer', desc: 'Kuasai kategori Makanan', icon: '🍎' },
+            { id: 'family_star', title: 'Family Star', desc: 'Kuasai kategori Keluarga', icon: '👨‍👩‍👧' },
+            { id: 'body_master', title: 'Body Master', desc: 'Kuasai kategori Tubuh Badan', icon: '🧍' },
             { id: 'bilingual_star', title: 'Bilingual Star', desc: 'Mencapai 500 markah', icon: '⭐' },
             { id: 'streak_master', title: 'Streak Master', desc: 'Capai 10 Streak berturut-turut', icon: '🔥' },
             { id: 'super_learner', title: 'Super Learner', desc: 'Mencapai 1,000 markah', icon: '🚀' },
             { id: 'vocab_master', title: 'Vocabulary Master', desc: 'Selesai 100 soalan', icon: '👑' }
         ];
 
-        // ==================== CATEGORIES & DICTIONARY SEED DATA ====================
-        // Categories list for Level 1 & Level 2
+        // ==================== CATEGORIES LIST ====================
         const LEVEL_1_CATEGORIES = [
             "Keluarga", "Tubuh Badan", "Emosi", "Pakaian", "Kasut & Aksesori", "Nombor",
             "Bahagian Rumah", "Barang Rumah", "Dapur", "Bilik Tidur", "Makanan", "Minuman",
@@ -627,33 +600,135 @@
             "Nilai Murni", "Kata Kerja", "Kata Adjektif", "Perkataan & Ungkapan"
         ];
 
-        // Sample dictionary dataset generator for consistent dynamic 2D illustrations
-        function getDictionaryWords(level, category) {
-            // Generating structured words with dynamic visual illustration URLs
-            const wordsSample = [
-                { bm: "Kucing", en: "Cat", svg: "🐱" },
-                { bm: "Anjing", en: "Dog", svg: "🐶" },
-                { bm: "Burung", en: "Bird", svg: "🐦" },
-                { bm: "Ikan", en: "Fish", svg: "🐟" },
-                { bm: "Epal", en: "Apple", svg: "🍎" },
-                { bm: "Pisang", en: "Banana", svg: "🍌" },
+        // ==================== STRICT CATEGORY DICTIONARY DATA (FIXED ISSUE) ====================
+        const CATEGORY_WORDS_DB = {
+            "Keluarga": [
+                { bm: "Bapa", en: "Father", svg: "👨" },
+                { bm: "Ibu", en: "Mother", svg: "👩" },
+                { bm: "Abang", en: "Brother", svg: "👦" },
+                { bm: "Kakak", en: "Sister", svg: "👧" },
+                { bm: "Bayi", en: "Baby", svg: "👶" },
+                { bm: "Datuk", en: "Grandfather", svg: "👴" },
+                { bm: "Nenek", en: "Grandmother", svg: "👵" }
+            ],
+            "Tubuh Badan": [
+                { bm: "Mata", en: "Eye", svg: "👁️" },
+                { bm: "Hidung", en: "Nose", svg: "👃" },
+                { bm: "Telinga", en: "Ear", svg: "👂" },
+                { bm: "Mulut", en: "Mouth", svg: "👄" },
+                { bm: "Tangan", en: "Hand", svg: "🤚" },
+                { bm: "Kaki", en: "Foot", svg: "🦶" },
+                { bm: "Gigi", en: "Tooth", svg: "🦷" },
+                { bm: "Rambut", en: "Hair", svg: "🦱" }
+            ],
+            "Emosi": [
+                { bm: "Gembira", en: "Happy", svg: "😀" },
+                { bm: "Sedih", en: "Sad", svg: "😢" },
+                { bm: "Marah", en: "Angry", svg: "😡" },
+                { bm: "Takut", en: "Scared", svg: "😨" },
+                { bm: "Terkejut", en: "Surprised", svg: "😲" },
+                { bm: "Penat", en: "Tired", svg: "😴" }
+            ],
+            "Pakaian": [
+                { bm: "Baju T-Shirt", en: "T-Shirt", svg: "👕" },
+                { bm: "Seluar", en: "Pants", svg: "👖" },
+                { bm: "Gaun", en: "Dress", svg: "👗" },
+                { bm: "Kemeja", en: "Shirt", svg: "👔" },
+                { bm: "Jaket", en: "Jacket", svg: "🧥" },
+                { bm: "Topi", en: "Hat", svg: "🧢" }
+            ],
+            "Kasut & Aksesori": [
+                { bm: "Kasut", en: "Shoes", svg: "👟" },
+                { bm: "Stoking", en: "Socks", svg: "🧦" },
+                { bm: "Jam Tangan", en: "Watch", svg: "⌚" },
+                { bm: "Cermin Mata", en: "Glasses", svg: "👓" },
+                { bm: "Tali Pinggang", en: "Belt", svg: "🥊" }
+            ],
+            "Nombor": [
+                { bm: "Satu", en: "One", svg: "1️⃣" },
+                { bm: "Dua", en: "Two", svg: "2️⃣" },
+                { bm: "Tiga", en: "Three", svg: "3️⃣" },
+                { bm: "Empat", en: "Four", svg: "4️⃣" },
+                { bm: "Lima", en: "Five", svg: "5️⃣" }
+            ],
+            "Kenderaan Darat": [
                 { bm: "Kereta", en: "Car", svg: "🚗" },
                 { bm: "Bas", en: "Bus", svg: "🚌" },
-                { bm: "Rumah", en: "House", svg: "🏠" },
-                { bm: "Buku", en: "Book", svg: "📖" },
-                { bm: "Bintang", en: "Star", svg: "⭐" },
-                { bm: "Matahari", en: "Sun", svg: "☀️" },
-                { bm: "Bunga", en: "Flower", svg: "🌸" },
-                { bm: "Pokok", en: "Tree", svg: "🌳" },
-                { bm: "Gajah", en: "Elephant", svg: "🐘" }
-            ];
+                { bm: "Motosikal", en: "Motorcycle", svg: "🏍️" },
+                { bm: "Basikal", en: "Bicycle", svg: "🚲" },
+                { bm: "Kereta Api", en: "Train", svg: "🚆" },
+                { bm: "Lori", en: "Truck", svg: "🚚" }
+            ],
+            "Kenderaan Udara": [
+                { bm: "Kapal Terbang", en: "Airplane", svg: "✈️" },
+                { bm: "Helikopter", en: "Helicopter", svg: "🚁" },
+                { bm: "Roket", en: "Rocket", svg: "🚀" },
+                { bm: "Belon Udara Panas", en: "Hot Air Balloon", svg: "🎈" }
+            ],
+            "Haiwan Peliharaan": [
+                { bm: "Kucing", en: "Cat", svg: "🐱" },
+                { bm: "Anjing", en: "Dog", svg: "🐶" },
+                { bm: "Ikan Emas", en: "Goldfish", svg: "🐠" },
+                { bm: "Arnab", en: "Rabbit", svg: "🐰" },
+                { bm: "Hamster", en: "Hamster", svg: "🐹" }
+            ],
+            "Haiwan Liar": [
+                { bm: "Singa", en: "Lion", svg: "🦁" },
+                { bm: "Harimau", en: "Tiger", svg: "🐯" },
+                { bm: "Gajah", en: "Elephant", svg: "🐘" },
+                { bm: "Zirafah", en: "Giraffe", svg: "🦒" },
+                { bm: "Monyet", en: "Monkey", svg: "🐒" }
+            ],
+            "Makanan": [
+                { bm: "Nasi", en: "Rice", svg: "🍚" },
+                { bm: "Roti", en: "Bread", svg: "🍞" },
+                { bm: "Mee", en: "Noodles", svg: "🍜" },
+                { bm: "Ayam Goreng", en: "Fried Chicken", svg: "🍗" },
+                { bm: "Telur", en: "Egg", svg: "🥚" }
+            ],
+            "Buah-buahan": [
+                { bm: "Epal", en: "Apple", svg: "🍎" },
+                { bm: "Pisang", en: "Banana", svg: "🍌" },
+                { bm: "Oren", en: "Orange", svg: "🍊" },
+                { bm: "Tembikai", en: "Watermelon", svg: "🍉" },
+                { bm: "Anggur", en: "Grapes", svg: "🍇" }
+            ],
+            "Sekolah": [
+                { bm: "Buku", en: "Book", svg: "📚" },
+                { bm: "Beg", en: "Bag", svg: "🎒" },
+                { bm: "Meja", en: "Desk", svg: "🪑" },
+                { bm: "Papan Hitam", en: "Blackboard", svg: "🗂️" },
+                { bm: "Kerusi", en: "Chair", svg: "🪑" }
+            ],
+            "Alat Tulis": [
+                { bm: "Pensel", en: "Pencil", svg: "✏️" },
+                { bm: "Pemadam", en: "Eraser", svg: "🧹" },
+                { bm: "Pemerintah", en: "Ruler", svg: "📏" },
+                { bm: "Gunting", en: "Scissors", svg: "✂️" },
+                { bm: "Pen", en: "Pen", svg: "🖊️" }
+            ]
+        };
 
-            // Generating placeholder SVG illustration data URLs for 2D visual presentation
-            return wordsSample.map((item, idx) => {
+        // Standardized Fallback generator for unlisted categories to prevent empty states or cross-category leaking
+        function getDictionaryWords(level, category) {
+            let baseList = CATEGORY_WORDS_DB[category];
+
+            if (!baseList || baseList.length === 0) {
+                // Dynamic generator based purely on category name matching
+                baseList = [
+                    { bm: `${category} 1`, en: `${category} Item 1`, svg: "🏷️" },
+                    { bm: `${category} 2`, en: `${category} Item 2`, svg: "📌" },
+                    { bm: `${category} 3`, en: `${category} Item 3`, svg: "📦" },
+                    { bm: `${category} 4`, en: `${category} Item 4`, svg: "⭐" },
+                    { bm: `${category} 5`, en: `${category} Item 5`, svg: "💡" }
+                ];
+            }
+
+            return baseList.map((item, idx) => {
                 const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
                     <rect width="100%" height="100%" fill="#FFF9E6" rx="20"/>
                     <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-size="80">${item.svg}</text>
-                    <text x="50%" y="80%" dominant-baseline="middle" text-anchor="middle" font-size="18" font-family="sans-serif" font-weight="bold" fill="#5271FF">${item.bm} / ${item.en}</text>
+                    <text x="50%" y="80%" dominant-baseline="middle" text-anchor="middle" font-size="16" font-family="sans-serif" font-weight="bold" fill="#5271FF">${item.bm} / ${item.en}</text>
                 </svg>`;
                 const encodedSvg = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgContent);
 
@@ -668,7 +743,7 @@
             });
         }
 
-        // ==================== AUDIO FEEDBACK SYSTEM ====================
+        // ==================== AUDIO FEEDBACK ====================
         function playBeep(type) {
             if (!isSoundOn) return;
             try {
@@ -680,37 +755,22 @@
                 gain.connect(ctx.destination);
 
                 if (type === 'correct') {
-                    // 1 Beep - Soft High Pitch
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+                    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
                     gain.gain.setValueAtTime(0.1, ctx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
                     osc.start();
                     osc.stop(ctx.currentTime + 0.25);
                 } else if (type === 'wrong') {
-                    // 2 Beeps - Soft Low Pitch
                     osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(220, ctx.currentTime); // A3
+                    osc.frequency.setValueAtTime(220, ctx.currentTime);
                     gain.gain.setValueAtTime(0.1, ctx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
                     osc.start();
                     osc.stop(ctx.currentTime + 0.15);
-
-                    setTimeout(() => {
-                        const osc2 = ctx.createOscillator();
-                        const gain2 = ctx.createGain();
-                        osc2.connect(gain2);
-                        gain2.connect(ctx.destination);
-                        osc2.type = 'triangle';
-                        osc2.frequency.setValueAtTime(196, ctx.currentTime); // G3
-                        gain2.gain.setValueAtTime(0.1, ctx.currentTime);
-                        gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-                        osc2.start();
-                        osc2.stop(ctx.currentTime + 0.2);
-                    }, 180);
                 }
             } catch (e) {
-                console.log("Audio not supported or blocked");
+                console.log("Audio play prevented");
             }
         }
 
@@ -720,7 +780,7 @@
             soundBtn.innerHTML = isSoundOn ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute text-slate-400"></i>';
         }
 
-        // ==================== NAVIGATION CONTROLLER ====================
+        // ==================== NAVIGATION ====================
         function navigateTo(viewId, params = {}) {
             document.querySelectorAll('.view-screen').forEach(el => el.classList.add('hidden'));
             const targetView = document.getElementById(viewId);
@@ -763,7 +823,6 @@
                 auth.createUserWithEmailAndPassword(email, password)
                     .then((userCredential) => {
                         const uid = userCredential.user.uid;
-                        // Initialize Parent Settings
                         db.ref(`users/${uid}/parentSettings`).set({
                             name: name || "Parent",
                             pin: "1234"
@@ -781,7 +840,6 @@
                 currentUser = user;
                 document.getElementById('parent-email-display').innerText = user.email;
 
-                // Sync Parent Data & Child Profiles from Cloud
                 db.ref(`users/${user.uid}`).on('value', (snapshot) => {
                     const data = snapshot.val() || {};
                     parentSettings = data.parentSettings || { pin: "1234" };
@@ -793,7 +851,6 @@
                     }));
 
                     if (activeChild) {
-                        // Refresh active child reference
                         const updatedActive = childProfiles.find(c => c.id === activeChild.id);
                         if (updatedActive) activeChild = updatedActive;
                         updateChildHeaderUI();
@@ -822,7 +879,7 @@
             auth.signOut();
         }
 
-        // ==================== CHILD PROFILE ENGINE ====================
+        // ==================== CHILD PROFILES ====================
         function renderChildProfiles() {
             const grid = document.getElementById('child-profiles-grid');
             grid.innerHTML = '';
@@ -848,7 +905,6 @@
             activeChild = childProfiles.find(c => c.id === childId);
             if (!activeChild) return;
 
-            // Ensure child data structures exist
             if (!activeChild.score) activeChild.score = 0;
             if (!activeChild.streak) activeChild.streak = 0;
             if (!activeChild.badges) activeChild.badges = {};
@@ -880,12 +936,11 @@
                 score: activeChild.score || 0,
                 streak: activeChild.streak || 0,
                 bestStreak: activeChild.bestStreak || 0,
-                badges: activeChild.badges || {},
-                categoryMastery: activeChild.categoryMastery || {}
+                badges: activeChild.badges || {}
             });
         }
 
-        // ==================== PARENT MODE & PIN SECURITY ====================
+        // ==================== PARENT MODE & PIN ====================
         let enteredPin = "";
 
         function openParentModal() {
@@ -1032,7 +1087,7 @@
                     </div>
                     <h4 class="font-bold text-slate-800 text-sm leading-tight">${cat}</h4>
                     <div class="text-[10px] font-extrabold text-amber-600 bg-amber-50 py-1 px-2 rounded-full">
-                        ⭐⭐⭐ 50 Perkataan
+                        ⭐⭐⭐ Kategori Tepat
                     </div>
                 `;
                 grid.appendChild(card);
@@ -1049,7 +1104,7 @@
             }
         }
 
-        // ==================== MODE 1: LEARN MODE (KAMUS) ====================
+        // ==================== LEARN MODE ====================
         let learnWordsList = [];
 
         function startLearnMode() {
@@ -1073,23 +1128,24 @@
         function nextLearnCard() {
             if (learnIndex < learnWordsList.length - 1) {
                 learnIndex++;
-                renderLearnCard();
             } else {
                 learnIndex = 0;
-                renderLearnCard();
             }
+            renderLearnCard();
         }
 
         function prevLearnCard() {
             if (learnIndex > 0) {
                 learnIndex--;
-                renderLearnCard();
+            } else {
+                learnIndex = learnWordsList.length - 1;
             }
+            renderLearnCard();
         }
 
-        // ==================== MODE 2: GAME ENGINE & ANTI-REPEAT POOL ====================
+        // ==================== GAME ENGINE & ANTI-REPEAT QUEUE ====================
         function startGameMode() {
-            // Generate unlimited Question Pool using Anti-Repeat Logic
+            document.getElementById('game-category-badge').innerText = currentCategory;
             initQuestionPool();
             updateGameHUD();
             nextGameQuestion();
@@ -1100,9 +1156,8 @@
             const categoryWords = getDictionaryWords(currentLevel, currentCategory);
             gameQuestionPool = [];
 
-            // Build diverse question variations for each word to prevent repetitions
+            // Build questions STRICTLY from category words
             categoryWords.forEach(word => {
-                // Question Type 1: Select correct picture by BM
                 gameQuestionPool.push({
                     type: 'PICTURE_BY_BM',
                     prompt: `Mana satu gambar "${word.bm}"?`,
@@ -1110,33 +1165,26 @@
                     hasImagePrompt: false
                 });
 
-                // Question Type 2: Select correct BM word by Image
                 gameQuestionPool.push({
                     type: 'BM_BY_IMAGE',
-                    prompt: `Apakah nama perkataan ini dalam Bahasa Melayu?`,
+                    prompt: `Apakah nama perkataan ini?`,
                     targetWord: word,
                     hasImagePrompt: true
                 });
 
-                // Question Type 3: BM -> BI translation
                 gameQuestionPool.push({
                     type: 'BM_TO_BI',
-                    prompt: `Apakah perkataan Bahasa Inggeris untuk "${word.bm}"?`,
-                    targetWord: word,
-                    hasImagePrompt: false
-                });
-
-                // Question Type 4: BI -> BM translation
-                gameQuestionPool.push({
-                    type: 'BI_TO_BM',
-                    prompt: `Apakah perkataan Bahasa Melayu untuk "${word.en}"?`,
+                    prompt: `Apakah Bahasa Inggeris untuk "${word.bm}"?`,
                     targetWord: word,
                     hasImagePrompt: false
                 });
             });
 
-            // Randomize Question Pool Shuffle
-            gameQuestionPool.sort(() => Math.random() - 0.5);
+            // Fisher-Yates Shuffle for strict anti-repeat order
+            for (let i = gameQuestionPool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [gameQuestionPool[i], gameQuestionPool[j]] = [gameQuestionPool[j], gameQuestionPool[i]];
+            }
         }
 
         function updateGameHUD() {
@@ -1150,15 +1198,12 @@
             document.getElementById('game-feedback-area').classList.add('hidden');
             document.getElementById('retry-btn').classList.add('hidden');
 
-            // Reset Question Pool if depleted (Anti-repeat completed full cycle)
             if (gameQuestionPool.length === 0) {
-                initQuestionPool();
+                initQuestionPool(); // Re-shuffle cycle when pool is cleared
             }
 
-            // Pop next unique question from pool
             currentQuestion = gameQuestionPool.pop();
 
-            // Render Prompt & Image
             document.getElementById('game-prompt').innerText = currentQuestion.prompt;
             const imageBox = document.getElementById('game-image-box');
             
@@ -1169,7 +1214,6 @@
                 imageBox.classList.add('hidden');
             }
 
-            // Generate Options Grid
             renderGameOptions();
         }
 
@@ -1177,15 +1221,23 @@
             const grid = document.getElementById('game-options-grid');
             grid.innerHTML = '';
 
-            const allCategoryWords = getDictionaryWords(currentLevel, currentCategory);
+            const categoryWords = getDictionaryWords(currentLevel, currentCategory);
             const target = currentQuestion.targetWord;
 
-            // Select 3 distractors
-            const distractors = allCategoryWords
-                .filter(w => w.id !== target.id)
-                .sort(() => Math.random() - 0.5)
-                .slice(0, 3);
+            // Distractors taken ONLY from the SAME CATEGORY (or generated within category fallback)
+            let distractors = categoryWords.filter(w => w.id !== target.id);
+            
+            // If category has few items, supplement distractors safely
+            if (distractors.length < 3) {
+                const extra = [
+                    { id: 'ex1', bm: 'Lain-lain 1', en: 'Other 1', image: target.image },
+                    { id: 'ex2', bm: 'Lain-lain 2', en: 'Other 2', image: target.image },
+                    { id: 'ex3', bm: 'Lain-lain 3', en: 'Other 3', image: target.image }
+                ];
+                distractors = [...distractors, ...extra];
+            }
 
+            distractors = distractors.sort(() => Math.random() - 0.5).slice(0, 3);
             const options = [target, ...distractors].sort(() => Math.random() - 0.5);
 
             options.forEach(opt => {
@@ -1210,13 +1262,11 @@
 
             if (isCorrect) {
                 isAnswerLocked = true;
-                // Correct Answer Flow
                 btnElement.classList.remove('bg-slate-50', 'border-slate-200');
                 btnElement.classList.add('bg-brand-green', 'text-white', 'border-green-700');
 
                 playBeep('correct');
 
-                // Update Scoring
                 if (activeChild) {
                     activeChild.score = (activeChild.score || 0) + 10;
                     activeChild.streak = (activeChild.streak || 0) + 1;
@@ -1228,7 +1278,6 @@
                     updateGameHUD();
                 }
 
-                // Show Brief Feedback
                 const feedbackArea = document.getElementById('game-feedback-area');
                 const feedbackBox = document.getElementById('game-feedback-box');
                 const feedbackText = document.getElementById('game-feedback-text');
@@ -1237,25 +1286,22 @@
                 feedbackBox.className = "p-3 rounded-2xl font-bold text-center text-lg flex items-center justify-center gap-2 bg-green-100 text-green-800 border-2 border-green-300";
                 feedbackText.innerText = "Betul! 🎉 (+10 pts)";
 
-                // AUTO Next Question without Submit button
                 setTimeout(() => {
                     nextGameQuestion();
                 }, 1000);
 
             } else {
-                // Wrong Answer Flow
                 btnElement.classList.remove('bg-slate-50', 'border-slate-200');
                 btnElement.classList.add('bg-brand-red', 'text-white', 'border-red-700', 'animate-shake');
 
                 playBeep('wrong');
 
                 if (activeChild) {
-                    activeChild.streak = 0; // Reset streak on error
+                    activeChild.streak = 0;
                     saveChildProgress();
                     updateGameHUD();
                 }
 
-                // Show "Sila Cuba Lagi" Button
                 const feedbackArea = document.getElementById('game-feedback-area');
                 const feedbackBox = document.getElementById('game-feedback-box');
                 const feedbackText = document.getElementById('game-feedback-text');
@@ -1269,13 +1315,12 @@
         }
 
         function retryQuestion() {
-            // Re-render current question so child can try again
             renderGameOptions();
             document.getElementById('game-feedback-area').classList.add('hidden');
             document.getElementById('retry-btn').classList.add('hidden');
         }
 
-        // ==================== BADGES & ACHIEVEMENTS ENGINE ====================
+        // ==================== BADGES ENGINE ====================
         function checkBadgesUnlock() {
             if (!activeChild) return;
             if (!activeChild.badges) activeChild.badges = {};
